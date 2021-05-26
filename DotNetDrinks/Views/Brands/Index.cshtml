@@ -3,9 +3,16 @@
 *@
 @{
 }
+@model IEnumerable<DotNetDrinks.Models.Brand> 
 <h1>Our Brands</h1>
 
 <ul>
+    @foreach(var b in Model)
+            {
+                <li>
+                    <a asp-controller="Brands" asp-action="Details" asp-route-name="@b.Name">@b.Name</a>@b.Name(@b.YearFounded)
+                </li>
+            }
     @*<li>
         <a asp-controller="Brands" asp-action="Details" asp-route-name="Canadian Club">Canadian Club</a>
     </li>
