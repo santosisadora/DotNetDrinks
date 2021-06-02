@@ -19,13 +19,26 @@ namespace DotNetDrinks.Controllers
             brands.Add(new Brand { Id = 102, Name = "Glenfiddich", YearFounded = 1883 });
             brands.Add(new Brand { Id = 103, Name = "JP Wiser", YearFounded = 1853 });
             brands.Add(new Brand { Id = 104, Name = "Jackson Triggs", YearFounded = 1993 });
+
+            // pass the brands list to the view for display
+            return View(brands);
+        }
+
+        //Get: /Brands/Details?name=Some Brand
+        public IActionResult Details(string name)
+        {
+            if (name == null)
+            {
+                return BadRequest();
+            }
+            //Read the name param from the URL, and put it in the ViewBag for display on this view
+            ViewBag.name = name;
             return View();
         }
 
-        //Get: /Brands/Details
-        public IActionResult Details(string name)
+        // GET: /Brands/Create
+        public IActionResult Create()
         {
-            ViewBag.name = name;
             return View();
         }
     }
