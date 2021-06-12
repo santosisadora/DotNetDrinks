@@ -12,9 +12,16 @@ namespace DotNetDrinks.Models
         //we use this Model in the Controller to create a mockup list of brand objects, pass to the Index View and use a loop
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Hey you! Don't forget me!")]
+        [MaxLength(100)]
         public string Name { get; set; }
+        
+
         [Range(1400,2025)]
         public int YearFounded { get; set; }
+
+        //navigation property to child Product objects - every brand(Parent) has a list of child Products  (Category is also
+        //a parent of product)
+        public List<Product> Products { get; set; }
     }
 }

@@ -29,6 +29,7 @@ namespace DotNetDrinks
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
+                    //This is using the Default Database Connection set in appsettings.json
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
 
