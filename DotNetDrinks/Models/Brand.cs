@@ -18,6 +18,7 @@ namespace DotNetDrinks.Models
         
 
         [Range(1400,2025)]
+        [Display(Name = "Year Founded")]
         public int YearFounded { get; set; }
 
         //navigation property to child Product objects - every brand(Parent) has a list of child Products  (Category is also
