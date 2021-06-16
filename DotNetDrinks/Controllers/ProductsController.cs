@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DotNetDrinks.Data;
 using DotNetDrinks.Models;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace DotNetDrinks.Controllers
 {
@@ -47,22 +49,40 @@ namespace DotNetDrinks.Controllers
         }
 
         // GET: Products/Create
+        //this method displays the form
         public IActionResult Create()
         {
-            ViewData["BrandId"] = new SelectList(_context.Brands, "Id", "Name");
-            ViewData["CategoryId"] = new SelectList(_context.Categroies, "Id", "Id");
+            ViewData["BrandId"] = new SelectList(_context.Brands.OrderBy(b => b.Name), "Id", "Name");
+            ViewData["CategoryId"] = new SelectList(_context.Categroies.OrderBy(c => c.Name), "Id", "Name");
             return View();
         }
 
         // POST: Products/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //this method saves the data entered by the user
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Price,Stock,Image,BrandId,CategoryId")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,Name,Price,Stock,BrandId,CategoryId")] Product product, IFormFile Image)
         {
             if (ModelState.IsValid)
             {
+                //upload photo and attach to the new product if any
+                if (Image != null) 
+                {
+                    var filePath = Path.GetTempFileName(); // get image from cache
+                    var fileName = Guid.NewGuid() + "-" + Image.FileName; //add unique id as prefix to file name
+                    var uploadPath = System.IO.Directory.GetCurrentDirectory() + "\\wwwroot\\img\\products\\" + fileName;
+
+                    using (var stream = new FileStream(uploadPath, FileMode.Create))
+                    {
+                        await Image.CopyToAsync(stream);
+                    }
+                    //add unique Image file name to the new product object before saving
+                    product.Image = fileName;
+                }
+
+
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -85,8 +105,8 @@ namespace DotNetDrinks.Controllers
             {
                 return NotFound();
             }
-            ViewData["BrandId"] = new SelectList(_context.Brands, "Id", "Name", product.BrandId);
-            ViewData["CategoryId"] = new SelectList(_context.Categroies, "Id", "Id", product.CategoryId);
+            ViewData["BrandId"] = new SelectList(_context.Brands.OrderBy(b => b.Name), "Id", "Name", product.BrandId);
+            ViewData["CategoryId"] = new SelectList(_context.Categroies.OrderBy(c =>c.Name), "Id", "Name", product.CategoryId);
             return View(product);
         }
 
@@ -95,7 +115,7 @@ namespace DotNetDrinks.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,Stock,Image,BrandId,CategoryId")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price,Stock,BrandId,CategoryId")] Product product,IFormFile Image, string CurrentImage)
         {
             if (id != product.Id)
             {
@@ -105,7 +125,25 @@ namespace DotNetDrinks.Controllers
             if (ModelState.IsValid)
             {
                 try
-                {
+                {    //upload photo and attach to the new product if any
+                    if (Image != null)
+                    {
+                        var filePath = Path.GetTempFileName(); // get image from cache
+                        var fileName = Guid.NewGuid() + "-" + Image.FileName; //add unique id as prefix to file name
+                        var uploadPath = System.IO.Directory.GetCurrentDirectory() + "\\wwwroot\\img\\products\\" + fileName;
+
+                        using (var stream = new FileStream(uploadPath, FileMode.Create))
+                        {
+                            await Image.CopyToAsync(stream);
+                        }
+                        //add unique Image file name to the new product object before saving
+                        product.Image = fileName;
+                    }
+                    else
+                    {
+                        //keep current image from getting wiped out if nothing new uploaded
+                        product.Image = CurrentImage;
+                    }
                     _context.Update(product);
                     await _context.SaveChangesAsync();
                 }
@@ -153,6 +191,13 @@ namespace DotNetDrinks.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var product = await _context.Products.FindAsync(id);
+
+            //remove image file if any
+            var Image = product.Image;
+
+            //delete file from wwwroot\img\products first
+
+
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
