@@ -9,9 +9,13 @@ using DotNetDrinks.Data;
 using DotNetDrinks.Models;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+//add reference to package to use authorization
+using Microsoft.AspNetCore.Authorization;
 
 namespace DotNetDrinks.Controllers
 {
+    [Authorize(Roles = "Administrator")]
+    [Authorize]
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext _context;

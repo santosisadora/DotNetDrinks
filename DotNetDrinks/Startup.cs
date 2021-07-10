@@ -33,8 +33,33 @@ namespace DotNetDrinks
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            // change to false so that the user dont need to verify their email addresses
+            // if this is true, once the user is created, it will send a link to the registered email so that the person can cofirm
+          
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+                //add the default role mechanism
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddAuthentication()
+                .AddGoogle(options =>
+                {
+                    //why is not a good idea to just paste the hardcoded values here???
+                    //Because the values may change and we would have to change the hardcoded values
+                    options.ClientId = Configuration.GetSection("Authentication:Google")["ClientId"];
+                    options.ClientSecret = Configuration.GetSection("Authentication:Google")["ClientSecret"];
+                }
+                );
+            services.AddAuthentication()
+                .AddFacebook(options =>
+                                {
+                                    //why is not a good idea to just paste the hardcoded values here???
+                                    //Because the values may change and we would have to change the hardcoded values
+                                    options.ClientId = Configuration.GetSection("Authentication:Facebook")["ClientId"];
+                                    options.ClientSecret = Configuration.GetSection("Authentication:Facebook")["ClientSecret"];
+                                }
+               );
+
             services.AddControllersWithViews();
         }
 

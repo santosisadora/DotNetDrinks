@@ -7,30 +7,25 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DotNetDrinks.Data;
 using DotNetDrinks.Models;
-//add reference to package to use authorization
-using Microsoft.AspNetCore.Authorization;
 
 namespace DotNetDrinks.Controllers
 {
-    //the [Authorize] will make sure that only authorized users can have access to this controller
-    [Authorize(Roles = "Administrator")]
-    [Authorize]
-    public class CategoriesController : Controller
+    public class StoreController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public CategoriesController(ApplicationDbContext context)
+        public StoreController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Categories
+        // GET: Store
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Categroies.ToListAsync());
+            return View(await _context.Categroies.OrderBy(c=> c.Name).ToListAsync());
         }
 
-        // GET: Categories/Details/5
+        // GET: Store/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -48,13 +43,13 @@ namespace DotNetDrinks.Controllers
             return View(category);
         }
 
-        // GET: Categories/Create
+        // GET: Store/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Categories/Create
+        // POST: Store/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -70,7 +65,7 @@ namespace DotNetDrinks.Controllers
             return View(category);
         }
 
-        // GET: Categories/Edit/5
+        // GET: Store/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -86,7 +81,7 @@ namespace DotNetDrinks.Controllers
             return View(category);
         }
 
-        // POST: Categories/Edit/5
+        // POST: Store/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -121,7 +116,7 @@ namespace DotNetDrinks.Controllers
             return View(category);
         }
 
-        // GET: Categories/Delete/5
+        // GET: Store/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -139,7 +134,7 @@ namespace DotNetDrinks.Controllers
             return View(category);
         }
 
-        // POST: Categories/Delete/5
+        // POST: Store/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

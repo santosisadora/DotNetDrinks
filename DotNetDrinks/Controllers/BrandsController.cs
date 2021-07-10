@@ -7,9 +7,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DotNetDrinks.Data;
 using DotNetDrinks.Models;
+//add reference to package to use authorization
+using Microsoft.AspNetCore.Authorization;
 
 namespace DotNetDrinks.Controllers
 {
+    //the [Authorize] will make sure that only authorized users can have access to this controller
+    [Authorize(Roles ="Administrator")]
     public class BrandsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -26,6 +30,8 @@ namespace DotNetDrinks.Controllers
         }
 
         // GET: Brands/Details/5
+        //allow anonymous allows anyone to see the Details
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
