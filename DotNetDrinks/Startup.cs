@@ -52,13 +52,23 @@ namespace DotNetDrinks
                 );
             services.AddAuthentication()
                 .AddFacebook(options =>
-                                {
-                                    //why is not a good idea to just paste the hardcoded values here???
-                                    //Because the values may change and we would have to change the hardcoded values
-                                    options.ClientId = Configuration.GetSection("Authentication:Facebook")["ClientId"];
-                                    options.ClientSecret = Configuration.GetSection("Authentication:Facebook")["ClientSecret"];
-                                }
+                {
+                    //why is not a good idea to just paste the hardcoded values here???
+                   //Because the values may change and we would have to change the hardcoded values
+                   options.ClientId = Configuration.GetSection("Authentication:Facebook")["ClientId"];
+                   options.ClientSecret = Configuration.GetSection("Authentication:Facebook")["ClientSecret"];
+                }
                );
+
+            services.AddAuthentication()
+                .AddMicrosoftAccount(options =>
+                {
+                    //why is not a good idea to just paste the hardcoded values here???
+                    //Because the values may change and we would have to change the hardcoded values
+                    options.ClientId = Configuration.GetSection("Authentication:Microsoft")["ClientId"];
+                    options.ClientSecret = Configuration.GetSection("Authentication:Microsoft")["ClientSecret"];
+                }
+                );
 
             services.AddControllersWithViews();
         }
